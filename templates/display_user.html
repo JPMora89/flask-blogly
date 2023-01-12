@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+
+  <div class="col-4">
+    {% if user.image_url  %}
+      <img class="mb-3" src="{{user.image_url}}">
+    {% endif %}
+    <a href="/users">
+      <button class="btn btn-primary">Back to All Users</button>
+    </a>
+  </div>
+  <div class="col-8">
+    <h1>{{user.first_name}} {{user.last_name}}</h1>
+    <div class="row">
+      <div class="col-auto p-1 ps-3">
+        <a href="/users/{{ user.id }}/edit">
+          <button class="btn btn-sm btn-primary">Edit</button>
+        </a>
+      </div>
+    
+      <div class="col-auto p-1">
+        <form action="/users/{{ user.id }}/delete" method="post">
+          <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+    <div class="container mt-4 mb-6 p-0">
+      <h2 class="">Posts</h2>
+    
+      <ul>
+        {% for post in user.posts %}
+          <li>
+            <a href="/posts/{{ post.id }}"><h5>{{ post.title }}</h5></a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="row mt-5">
+      <div class="col-auto">
+        <a href="/users/{{ user.id }}/posts/new">
+          <button class="btn btn-primary">New Post</button>
+        </a>
+      </div> 
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endblock %}
