@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>New Blog Post from {{ user.first_name }} {{ user.last_name }}</h1>
+  <form id="new-post-form" action="/users/{{user.id}}/posts/new" method="post">
+    <label class="form-label">Title</label>
+    <input class="form-control mb-3" name="title">
+
+    <label class="form-label">Content</label>
+    <textarea class="form-control mb-5" rows="6" name="content" form="new-post-form"></textarea>
+
+    <label class="form-label">Current Tags</label><br/>
+    <div class="container pb-5">
+      <div class="row">
+        {% for tag in all_tags %}
+          <div class="col-sm-4">
+            <input class="form-check-input" name="tag" type="checkbox" id="tag-{{tag.id}}" value="{{tag.id}}">
+            <label class="form-check-label" for="tag-{{tag.id}}">{{tag.name}}</label>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-auto">
+        <a href="/users/{{user.id}}">
+          <button class="btn btn-primary">Cancel</button>
+        </a>
+      </div> 
+      <div class="col-auto">
+        <button class="btn btn-primary" type="submit">
+          Submit
+        </button>
+      </div>
+    </div>
+  </form>
+{% endblock %}

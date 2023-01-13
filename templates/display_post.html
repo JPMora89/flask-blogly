@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>{{post.title}}</h1>
+  <p>
+    {% for line in post.content.split("\n") %}
+      {{line}}<br/>
+    {% endfor %}
+  </p>
+
+  <p><i>By {{ post.author.first_name }} {{ post.author.last_name }} on {{ post.created_at.strftime("%b %d, %Y at %I:%M %p") }}</i></p>
+  <p><i>Tags:</i>
+    {% for tag in post.tags %}
+      <span class="badge bg-primary">{{ tag.name }}</span>
+    {% endfor %}
+  </p>
+  <div class="row">
+    
+    <div class="col-auto">
+      <a href="/users/{{post.author.id}}">
+        <button class="btn btn-primary">Back to {{ post.author.first_name }} {{ post.author.last_name }}</button>
+      </a>
+    </div>
+
+    <div class="col-auto">
+      <a href="/posts/{{post.id}}/edit">
+        <button class="btn btn-success">Edit</button>
+      </a>
+    </div>
+
+    <div class="col-auto">
+      <form action="/posts/{{post.id}}/delete" method="post">
+        <button class="btn btn-danger" type="submit">
+          Delete
+        </button>
+      </form>
+    </div>
+
+
+
+
+    
+
+
+  </div.row>
+
+{% endblock %}

@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request
-from models import db, connect_db, User
+from models import db, connect_db, User, Post, Tag, PostTag
 from flask_debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
@@ -10,6 +10,7 @@ app.config['SQLALCHEMY_ECHO'] = True
 toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
+app.app_context().push()
 db.drop_all()
 db.create_all()
 
@@ -116,3 +117,76 @@ def delete_user(userid):
 
   return redirect("/users")
 
+@app.route('/users/<int:userid>/posts/new', methods=['GET'])
+def get_blog_post_form(userid):
+  """Show form to add a post for that user."""
+  user = User.query.get(userid)
+  all_tags = db.session.query(Tag).all()
+
+  return render_template('new_blog_form.html', user=user, all_tags=all_tags)
+
+
+@app.route('/users/<int:userid>/posts/new', methods=['POST'])
+def take_blog_post_form(userid):
+  """Take blog post"""
+  post = Post(title=request.form['title'], content=request.form['content'].replace("%0D%0A", "\n"),  author_id=userid)
+    
+  tag_ids = request.form.getlist("tag")
+  post.tags = []
+
+  for tag_id in tag_ids:
+    tag = Tag.query.get(int(tag_id))
+    post.tags.append(tag)
+
+  db.session.add(post)
+  db.session.commit()
+
+  return redirect(f"/users/{userid}")
+
+
+@app.route('/posts/<int:postid>', methods=['GET'])
+def get_post(postid):
+  """Show blog post"""
+  post = Post.query.get(postid)
+
+  return render_template('display_post.html', post=post)
+
+
+@app.route('/posts/<int:postid>/edit', methods=['GET'])
+def get_edit_post(postid):
+  """get edit post form"""
+  post = Post.query.get(postid)
+  all_tags = db.session.query(Tag).all()
+
+  return render_template('edit_blog_form.html', post=post, all_tags=all_tags)
+
+
+@app.route('/posts/<int:postid>/edit', methods=['POST'])
+def post_edit_post(postid):
+  """accept post for post edit"""
+  post=Post.query.get(postid)
+  
+  post.title = request.form['title']
+  post.content = request.form['content'].replace("%0D%0A", "\n")
+
+  tag_ids = request.form.getlist("tag")
+  post.tags = []
+
+  for tag_id in tag_ids:
+    tag = Tag.query.get(int(tag_id))
+    post.tags.append(tag)
+
+
+  db.session.commit()
+  return redirect(f"/users/{post.author_id}")
+
+
+@app.route('/posts/<int:postid>/delete', methods=['POST'])
+def delete_post(postid):
+  """Delete a post"""
+  post = Post.query.get(postid)
+  user_id = post.author_id
+  db.session.delete(post)
+  db.session.commit()
+  
+  return redirect(f"/users/{user_id}")

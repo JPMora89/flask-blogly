@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Edit {{ post.title }} by {{ post.author.first_name }} {{ post.author.last_name }}</h1>
+  <form id="edit-post-form" action="/posts/{{ post.id }}/edit" method="post">
+    <label class="form-label">Title</label>
+    <input class="form-control mb-3" name="title" value="{{post.title}}">
+
+    <label class="form-label">Content</label>
+    <textarea class="form-control mb-5" rows="6" name="content" form="edit-post-form">{{post.content}}</textarea>
+
+    <label class="form-label">Current Tags</label><br/>
+    <div class="container pb-5">
+      <div class="row">
+        {% for tag in all_tags %}
+          <div class="col-sm-4">
+            <input class="form-check-input" name="tag" type="checkbox" id="tag-{{tag.id}}" value="{{tag.id}}"
+              {% for post_tag in post.tags %}
+                {% if post_tag.id == tag.id %}
+                  checked
+                {% endif %}
+              {% endfor %}
+            >
+            <label class="form-check-label" for="tag-{{tag.id}}">{{tag.name}}</label>
+
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-auto">
+        <a href="/users/{{post.author_id}}">
+          <button class="btn btn-primary">Cancel</button>
+        </a>
+      </div> 
+      <div class="col-auto">
+        <button class="btn btn-primary" type="submit">
+          Save
+        </button>
+      </div>
+    </div>
+  </form>
+{% endblock %}
