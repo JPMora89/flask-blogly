@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>New Tag</h1>
+  <form method="post">
+    <label for="tag-name">Name</label>
+    <input class="mb-5" name="tag-name">
+    <div class="row">
+      <div class="col-auto">
+        <a href="/tags/">
+          <button class="btn btn-primary">Cancel</button>
+        </a>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-success">Save Tag</button>
+      </div>
+    </div>
+  </form>
+{% endblock %}

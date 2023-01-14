@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Something Went Wrong!</h1>
+    {% if msg %}
+      <p>{{msg}}</p>
+    {% endif %} 
+  <a href="/">
+    <button class="btn btn-primary">Go Back Home</button>
+  </a>
+{% endblock %}
