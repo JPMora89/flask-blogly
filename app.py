@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-
+debug=True
 toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
@@ -170,7 +170,7 @@ def post_edit_post(postid):
   post.content = request.form['content'].replace("%0D%0A", "\n")
 
   tag_ids = request.form.getlist("tag")
-  post.tags = []
+  post.tags = [] 
 
   for tag_id in tag_ids:
     tag = Tag.query.get(int(tag_id))
@@ -190,3 +190,67 @@ def delete_post(postid):
   db.session.commit()
   
   return redirect(f"/users/{user_id}")
+  
+  
+@app.route('/tags', methods=['GET'])
+def get_tags():
+  """List all tags, with links to the tag detail page"""
+
+  tags = db.session.query(Tag).all()
+
+  return render_template('tags.html', tags=tags)
+
+
+
+@app.route('/tags/<int:tagid>', methods=['GET'])
+def get_tag(tagid):
+  """Show detail about a tag. Have links to edit form and to delete"""
+  tag = Tag.query.get(tagid)
+
+  return render_template('tag_detail.html', tag=tag)
+
+
+@app.route('/tags/new', methods=['GET'])
+def get_tag_form():
+  """Show a form to add a new tag"""
+  return render_template('new_tag.html')
+
+
+@app.route('/tags/new', methods=['POST'])
+def post_tag_form():
+  """Process add form, adds tag, and redirect to tag list"""
+  try:
+    tag = Tag(name=request.form["tag-name"])
+    db.session.add(tag)
+    db.session.commit()
+    return redirect("/tags")
+  except:
+    return render_template("/error.html", msg="You may have tried to create a tag that already exists.")
+
+
+@app.route('/tags/<int:tagid>/edit', methods=['GET'])
+def get_tag_edit_form(tagid):
+  """Show edit form for a tag"""
+  tag = Tag.query.get(tagid)
+
+  return render_template('edit_tag.html', tag=tag)
+
+
+@app.route('/tags/<int:tagid>/edit', methods=['POST'])
+def post_tag_edit_form(tagid):
+  """Process edit form, edit tag, and redirect to the tags list"""
+  tag = Tag.query.get(tagid)
+  tag.name = request.form["tag-name"]
+  db.session.commit()
+
+  return redirect(f"/tags/{tagid}")
+
+
+@app.route('/tags/<int:tagid>/delete', methods=['POST'])
+def delete_tag(tagid):
+  """Delete a tag"""
+  tag = Tag.query.get(tagid)
+  db.session.delete(tag)
+  db.session.commit()
+
+  return redirect("/tags")

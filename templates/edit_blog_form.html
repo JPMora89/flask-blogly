@@ -13,13 +13,13 @@
       <div class="row">
         {% for tag in all_tags %}
           <div class="col-sm-4">
-            <input class="form-check-input" name="tag" type="checkbox" id="tag-{{tag.id}}" value="{{tag.id}}"
+            <input class="form-check-input" name="tag" type="checkbox" id="tag-{{tag.id}}" value="{{tag.id}}">
               {% for post_tag in post.tags %}
                 {% if post_tag.id == tag.id %}
                   checked
                 {% endif %}
               {% endfor %}
-            >
+            
             <label class="form-check-label" for="tag-{{tag.id}}">{{tag.name}}</label>
 
           </div>
