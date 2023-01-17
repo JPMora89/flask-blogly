@@ -11,7 +11,7 @@ toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 app.app_context().push()
-db.drop_all()
+# db.drop_all()
 db.create_all()
 
 
